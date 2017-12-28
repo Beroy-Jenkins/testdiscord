@@ -1,0 +1,15 @@
+{
+    "name": "ServerNode",
+    "version": "1.0",
+    "description": "Nodejs Server",
+    "main": "index.js",
+    "dependencies": {
+        "discord.io": "^2.5.3"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Beroy",
+    "license": "ISC"
+}
