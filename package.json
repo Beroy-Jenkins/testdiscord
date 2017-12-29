@@ -4,7 +4,8 @@
     "description": "Nodejs Server",
     "main": "index.js",
     "dependencies": {
-        "discord.io": "github:woor/discord.io#gateway_v6"
+        "discord.io": "github:woor/discord.io#gateway_v6",
+        "request": "^2.83.0"
     },
     "devDependencies": {},
     "scripts": {
