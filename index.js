@@ -39,6 +39,7 @@ bot.on('message', function (user, userID, channelID, message, rawEvent) {
         bot.sendMessage({ to: meuId, message: "sucess "+user });
         console.log(user);
 
+        
          //----------------------------------------cria um canal pra encaminha minhas dms
          if(userID != meuId){
             bot.createDMChannel(userID, function (err, myprivatechannel) {
@@ -69,93 +70,21 @@ bot.on('message', function (user, userID, channelID, message, rawEvent) {
         //sendMessage({ to: channelID, message: my_message });
 
         if (message_command.startsWith(prefix + "help")) {
-            bot.sendMessage({ to: channelID, message:"```||test\n||random\n||ppt\n||userinfo```" });
-
-            }
-        if (message_command.startsWith(prefix + "userinfo")) {
-                if(message.mentions.users.first()) { //Check if the message has a mention in it.
-                        let user = message.mentions.users.first(); //Since message.mentions.users returns a collection; we must use the first() method to get the first in the collection.
-                        let output = user.username + user.discriminator /*Username and Discriminator*/ +
-                        "\nAvatar URL: " + user.avatarURL; /*The Avatar URL*/
-                        message.channel.sendMessage(output); //We send the output in the current channel.
-                } else {
-                        message.reply("Invalid user."); //Reply with a mention saying "Invalid user."
-                }
-        }
-        if( message_command.startsWith(prefix +  "ment")){
-            bot.sendMessage({
-                to: channelID,
-                message: "<@" + userID + ">"
-                
-
-            });
-        }
-        if( message_command.startsWith(prefix +  "all")){
-            bot.sendMessage({
-                to: channelID,
-                message: bot.getAllUsers()
-                
-
-            });
-        }
-
-        if( message_command.startsWith(prefix +  "test")){
-            if(userID === meuId ){
-                bot.sendMessage({ to: channelID, message: userID + " " + user});
-            } else {
-                var  usernalista = false
-                    , test = [
-                        { name: "lanfour", id: "232940764609380352", message: " Irmão do Lanfive" }
-                        , { name: "coffe", id: "298878817664237569", message: " With milk" }
-                        , { name: "meli", id: "243037223610482688", message: " Vai se Fuder meli" }
-                        , { name: "bmonster", id: "150772264948727810", message: " Ech" }
-                        , { name: "isacc", id: "171264412785704960", message: " Bobo" }
-                        , { name: "jasmin", id: "152145019296284672", message: " Bu!" }
-                        , { name: "rafa", id: "214205021561159680", message: " Tnc rafa" }
-                        , { name: "pedro", id: "204015663713484801", message: " Você é D+" }
-                        , { name: "tonso", id: "251449899483267072", message: "Viciado" }
-                        , { name: "grim", id: "217840242789580801", message: "Tnc grim" }
-                        , { name: "prim", id: "251449909495070720", message: "Main adc" }
-                        , { name: "dark", id: "241960248569626625", message: "Calma cara" }
-                        , { name: "gordo", id: "260198885723471872", message: "Backstab" }
-                        , { name: "test", id: "id", message: "messagem" }
-                     ];     
-                console.log(usernalista);
-                for (var i=0; i< test.length; i++ ){
-                    if(userID === test[i].name){
-                        bot.sendMessage({ to: channelID, message: userID+ " " + user+ " " + test[i].message});
-                        usernalista = true;
-                        break;
-                    }
-
-                }
-                if(!usernalista ){
-                    bot.sendMessage({ to: channelID, message: ":pizza:"});
-                }
-                    
-            }
-        }
-
-        if (message_command.startsWith(prefix + "random")) {
-            bot.sendMessage({ to: channelID, message:  user + " " + getRandomInt(0,100)});
-            function getRandomInt(min, max) {
-                min = Math.ceil(min);
-                max = Math.floor(max);
-                return Math.floor(Math.random() * (max - min)) + min;
-              }
-
-
-        }
-        if (message_command.startsWith(prefix + "ppt")) {
-            var jogador1 = this.userID
-            if (message_command.startsWith(prefix + "ppt " +"<@" + userID + ">")) {
-                var jogador2 = this.userID
-                bot.sendMessage({ to: channelID, message: jogador1+""+jogador2});
-                console.log(jogador2,jogador1)
-            }else{
-            bot.sendMessage({ to: channelID, message:  "bot"});
-            console.log(jogador2,jogador1)
-            }
+            help (user, userID, channelID, message, rawEvent); 
+        } else if (message_command.startsWith(prefix + "fale")) {
+            fale (user, userID, channelID, message, rawEvent);
+        } else if (message_command.startsWith(prefix + "userinfo")) {
+            userinfo (user, userID, channelID, message, rawEvent);
+        } else if ( message_command.startsWith(prefix +  "ment")){
+            ment (user, userID, channelID, message, rawEvent);
+        } else if ( message_command.startsWith(prefix +  "all")){
+            all (user, userID, channelID, message, rawEvent);
+        } else if ( message_command.startsWith(prefix +  "test")){
+            test (user, userID, channelID, message, rawEvent);
+        } else if (message_command.startsWith(prefix + "random")) {
+            random (user, userID, channelID, message, rawEvent);
+        } else if (message_command.startsWith(prefix + "ppt")) {
+            ppt (user, userID, channelID, message, rawEvent);
         }
 
 
@@ -199,7 +128,7 @@ bot.on('message', function (user, userID, channelID, message, rawEvent) {
 
 
 
-    }
+   }
 });
 
 // bot.createDMChannel("152145019296284672", function(err, myprivatechannel) {
@@ -209,8 +138,112 @@ bot.on('message', function (user, userID, channelID, message, rawEvent) {
 // });
 
 setTimeout(function () {
-    //bot.sendMessage({ to: "152145019296284672", message: "--boop--" });
     bot.sendMessage({ to: "156247284475101185", message: ":oi: " });
-    bot.sendMessage({ to: "243037223610482688   ", message: "Vai se Fuder" });
-   // bot.sendMessage({ to: "273529325217906688", message: "gata nojenta" });
+    bot.sendMessage({ to: "243037223610482688", message: "Vai se Fuder" });
+    bot.sendMessage({ to: "217840242789580801", message: "Vai se Fuder" });
 }, 5000);// enventos baseado em mensagens
+
+
+
+function help (user, userID, channelID, message, rawEvent) {
+    bot.sendMessage({ to: channelID, message:"```||test\n||random\n||ppt\n||fale```" });
+}
+function fale (user, userID, channelID, message, rawEvent) {
+    var message_command = message.substring(6,message.length);    
+    bot.sendMessage({ to: channelID, message: message_command });
+     bot.deleteMessage({
+        channelID: channelID,
+        messageID: rawEvent.d.id
+    });
+}
+function userinfo (user, userID, channelID, message, rawEvent) {
+    if(message.mentions.users.first()) { //Check if the message has a mention in it.
+        let user = message.mentions.users.first(); //Since message.mentions.users returns a collection; we must use the first() method to get the first in the collection.
+        let output = user.username + user.discriminator /*Username and Discriminator*/ +
+        "\nAvatar URL: " + user.avatarURL; /*The Avatar URL*/
+        message.channel.sendMessage(output); //We send the output in the current channel.
+    } else {
+        message.reply("Invalid user."); //Reply with a mention saying "Invalid user."
+    }
+}
+function ment (user, userID, channelID, message, rawEvent) {
+    var s = message_command.replace(/[^0-9\.]+/g, '');
+            bot.sendMessage({
+                to: channelID,
+                message: "<@" + s + ">"
+            });
+}
+function all (user, userID, channelID, message, rawEvent) {
+    bot.sendMessage({
+        to: channelID,
+        message: bot.getAllUsers()
+    });
+}
+function random (user, userID, channelID, message, rawEvent) {
+    bot.sendMessage({ to: channelID, message:  user + " " + getRandomInt(0,100)});
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min)) + min;
+              }
+}
+function ppt (user, userID, channelID, message, rawEvent) {
+        var jogador1 = userID;
+        if (message_command.startsWith(prefix + "ppt"+" ")) {
+            var jogador2 = message_command.substring(6, message_command.length)
+            bot.sendMessage({ to: channelID, message: "<@"+jogador1+">"+" "+jogador2});
+        }else{
+            bot.sendMessage({ to: channelID, message:  "bot"});
+            console.log(jogador2,jogador1)  
+        }
+}
+function test (user, userID, channelID, message, rawEvent) {
+    if(userID === meuId ){
+        bot.sendMessage({ to: channelID, message: userID + " " + user});
+    } else {
+        var  usernalista = false
+            , test = [
+                { name: "lanfour", id: "232940764609380352", message: " Irmão do Lanfive" }
+                , { name: "coffe", id: "298878817664237569", message: " With milk" }
+                , { name: "meli", id: "243037223610482688", message: " Vai se Fuder meli" }
+                , { name: "bmonster", id: "150772264948727810", message: " Ech" }
+                , { name: "isacc", id: "171264412785704960", message: " Bobo" }
+                , { name: "jasmin", id: "152145019296284672", message: " Bu!" }
+                , { name: "rafa", id: "214205021561159680", message: " Tnc rafa" }
+                , { name: "pedro", id: "204015663713484801", message: " Você é D+" }
+                , { name: "tonso", id: "251449899483267072", message: "Viciado" }
+                , { name: "grim", id: "217840242789580801", message: "Tnc grim" }
+                , { name: "prim", id: "251449909495070720", message: "Main adc" }
+                , { name: "dark", id: "241960248569626625", message: "Calma cara" }
+                , { name: "gordo", id: "260198885723471872", message: "Backstab" }
+                , { name: "bot", id: "396872885882322965", message: "Beroy's Dog" }
+                , { name: "test", id: "id", message: "messagem" }
+             ];     
+        console.log(usernalista);
+        for (var i=0; i< test.length; i++ ){
+            if(userID === test[i].id){
+                bot.sendMessage({ to: channelID, message: userID+ " " + user+ " " + test[i].message});
+                usernalista = true;
+                break;
+            }
+        }
+        if(!usernalista ){
+            bot.sendMessage({ to: channelID, message: ":pizza:"});
+        }      
+    }
+}
+
+
+
+function fale (user, userID, channelID, message, rawEvent) {
+}
+function fale (user, userID, channelID, message, rawEvent) {
+}
+function fale (user, userID, channelID, message, rawEvent) {
+}
+function fale (user, userID, channelID, message, rawEvent) {
+}
+function fale (user, userID, channelID, message, rawEvent) {
+}
+function fale (user, userID, channelID, message, rawEvent) {
+}
