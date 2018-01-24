@@ -21,6 +21,7 @@ bot.on('ready', function (event) {
     console.log('Bot ' + bot.username + ' logged in - ' + bot.id + '\n');
     bot_online = true;
     bot.sendMessage({ to: meuId, message: "Pronto " });
+    bot.sendMessage({ to: meuId, message: "Pronto 3 " });
 
 });
 
@@ -30,6 +31,7 @@ bot.on('disconnect', function (erMsg, code) {
     if (shutdown_detected == false) { bot.connect(); }
 });
 
+//test
 
 // enventos baseado em mensagens
 bot.on('message', function (user, userID, channelID, message, rawEvent) {
@@ -85,6 +87,14 @@ bot.on('message', function (user, userID, channelID, message, rawEvent) {
             random (user, userID, channelID, message, rawEvent);
         } else if (message_command.startsWith(prefix + "ppt")) {
             ppt (user, userID, channelID, message, rawEvent);
+        }else if (message_command.startsWith(prefix + "5test")) {
+            channel_perm(channelID, {
+                "type": "", 
+                "once": "deny", 
+                "perm": "SEND_MESSAGES", 
+                "roleID": "",
+                "number": true
+               });
         }
 
 
@@ -148,6 +158,7 @@ setTimeout(function () {
 function help (user, userID, channelID, message, rawEvent) {
     bot.sendMessage({ to: channelID, message:"```||test\n||random\n||ppt\n||fale```" });
 }
+
 function fale (user, userID, channelID, message, rawEvent) {
     var message_command = message.substring(6,message.length);    
     bot.sendMessage({ to: channelID, message: message_command });
@@ -237,13 +248,183 @@ function test (user, userID, channelID, message, rawEvent) {
 
 function fale (user, userID, channelID, message, rawEvent) {
 }
-function fale (user, userID, channelID, message, rawEvent) {
-}
-function fale (user, userID, channelID, message, rawEvent) {
-}
-function fale (user, userID, channelID, message, rawEvent) {
-}
-function fale (user, userID, channelID, message, rawEvent) {
-}
-function fale (user, userID, channelID, message, rawEvent) {
+
+function channel_perm(roles, data) {
+
+    if ((typeof roles == "string") && (bot.channels[roles])) {
+        roles = bot.channels[roles].permissions;
+    }
+
+    if (Object.prototype.toString.call(roles) == "[object Object]") {
+
+        function get_perm_l(the_value) {
+            var permission_allow = [];
+            var permission_deny = [];
+
+            function insert_ind(finalxs1, finalxs2, boxtypexs) {
+                var tv_here = 1 << Discord.Permissions[finalxs1] & finalxs2;
+                if ((data) && (data.number == true)) {} else {
+                    if (tv_here == 0) {
+                        var tv_here = false;
+                    } else {
+                        var tv_here = true;
+                    }
+                }
+                if (boxtypexs == "allow") {
+                    permission_allow = { "number": Discord.Permissions[finalxs1], "value": tv_here };
+                } else if (boxtypexs == "deny") {
+                    permission_deny = { "number": Discord.Permissions[finalxs1], "value": tv_here };
+                }
+            }
+
+            if ((data) && (data.perm)) {
+
+                if (data.once == "allow") {
+                    if (the_value.allow) {
+                        insert_ind(data.perm, the_value.allow, "allow");
+                    }
+                } else if (data.once == "deny") {
+                    if (the_value.deny) {
+                        insert_ind(data.perm, the_value.deny, "deny");
+                    }
+                } else {
+                    if ((the_value.allow) && (the_value.deny)) {
+                        insert_ind(data.perm, the_value.allow, "allow");
+                        insert_ind(data.perm, the_value.deny, "deny");
+                    }
+                }
+
+            } else {
+
+                for (var items in Discord.Permissions) {
+
+                    if ((data) && (data.type == "allow")) {
+                        if (the_value.allow) {
+                            insert_ind(items, the_value.allow, "allow");
+                        }
+                    } else if ((data) && (data.type == "deny")) {
+                        if (the_value.deny) {
+                            insert_ind(items, the_value.deny, "deny");
+                        }
+                    } else {
+                        if ((the_value.allow) && (the_value.deny)) {
+                            insert_ind(items, the_value.allow, "allow");
+                            insert_ind(items, the_value.deny, "deny");
+                        }
+                    }
+
+                }
+
+            }
+
+            if ((data) && (data.once == "allow")) {
+                if ((the_value.allow) && (data.per == true)) {
+                    return { "value": permission_allow, "per": the_value.allow };
+                } else {
+                    return permission_allow;
+                }
+            } else if ((data) && (data.once == "deny")) {
+                if ((the_value.deny) && (data.per == true)) {
+                    return { "value": permission_deny, "per": the_value.deny };
+                } else {
+                    return permission_deny;
+                }
+            } else {
+                if ((data) && (data.per == true)) {
+                    if ((the_value.allow) && (the_value.deny)) {
+                        return { "deny": permission_deny, "allow": permission_allow, "d": the_value.allow, "a": the_value.deny };
+                    } else {
+
+                        if (the_value.allow) {
+                            return { "deny": permission_deny, "allow": permission_allow, "a": the_value.deny };
+                        } else
+                        if (the_value.deny) {
+                            return { "deny": permission_deny, "allow": permission_allow, "d": the_value.allow };
+                        } else {
+                            return { "deny": permission_deny, "allow": permission_allow };
+                        }
+
+                    }
+                } else {
+                    return { "deny": permission_deny, "allow": permission_allow };
+                }
+            }
+
+        }
+
+        // Select Role or User to get the list
+
+        function get_selector(data2) {
+            if ((data2 == "role") || (data2 == "user")) {
+
+                var the_list = {};
+                if (data2 == "role") {
+                    if ((data) && (data.roleID)) {
+                        if (roles.role[data.roleID]) {
+                            var the_list = get_perm_l(roles.role[data.roleID]);
+                        } else if (data.auto == true) {
+                            if (roles.role) {
+                                for (var k3 in roles.role) {
+                                    the_list[k3] = get_perm_l(roles.role[k3]);
+                                }
+                            } else {
+                                var the_list = null;
+                            }
+                        } else {
+                            var the_list = null;
+                        }
+                    } else {
+                        if (roles.role) {
+                            for (var k3 in roles.role) {
+                                the_list[k3] = get_perm_l(roles.role[k3]);
+                            }
+                        } else {
+                            var the_list = null;
+                        }
+                    }
+                } else if (data2 == "user") {
+                    if ((data) && (data.userID)) {
+                        if (roles.user[data.userID]) {
+                            var the_list = get_perm_l(roles.user[data.userID]);
+                        } else if (data.auto == true) {
+                            if (roles.user) {
+                                for (var k3 in roles.user) {
+                                    the_list[k3] = get_perm_l(roles.user[k3]);
+                                }
+                            } else {
+                                var the_list = null;
+                            }
+                        } else {
+                            var the_list = null;
+                        }
+                    } else {
+                        if (roles.user) {
+                            for (var k3 in roles.user) {
+                                the_list[k3] = get_perm_l(roles.user[k3]);
+                            }
+                        } else {
+                            var the_list = null;
+                        }
+                    }
+                }
+                return the_list;
+
+            } else {
+                return null;
+            }
+        }
+
+        // Select only the permission variable list
+        if ((data) && (data.type == "user")) {
+            return get_selector("user");
+        } else if ((data) && (data.type == "role")) {
+            return get_selector("role");
+        } else {
+            return { "user": get_selector("user"), "role": get_selector("user") };
+        }
+
+    } else {
+        return null;
+    }
+
 }
